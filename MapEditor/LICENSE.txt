@@ -1,0 +1,7 @@
+License:
+Code and images may be used, distributed, and modified freely for any purpose, commercial or otherwise, without limitation.
+No warranty is made for the safety of this code or its fitness for any purpose.
+
+Source Code
+The source code is included in the JAR file. If you have winrar or winzip, you can open the jar file in one of those programs to extract it. There are also the tiles and some sample maps in there too.
+If you used this program or source code and found it useful, a credit or link to this page in your product is appreciated but entirely optional.
