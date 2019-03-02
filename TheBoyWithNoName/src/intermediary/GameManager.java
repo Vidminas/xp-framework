@@ -62,6 +62,11 @@ public class GameManager extends Thread {
 		//get the currently pressed keys from the KeyboardController
 		HashSet<Integer> currentKeys=KeyboardController.getActiveKeys();
 		
+		//Close the window with escape button
+		if(currentKeys.contains(KeyEvent.VK_ESCAPE)){
+			System.exit(0);
+		}
+		
 		//manage the two possible run direction
 		if(currentKeys.contains(KeyEvent.VK_RIGHT)){
 			//move right
