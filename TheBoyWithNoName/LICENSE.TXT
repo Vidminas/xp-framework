@@ -1,8 +1,3 @@
-# theBoyWithNoName
-Work in progress Java 2D Platform 
-The GNU GPL v3 license applies to all the code in this repository.
-A copy of the license is attached below.
-
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
