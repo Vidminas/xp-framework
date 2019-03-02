@@ -29,7 +29,7 @@ public class GameManager extends Thread {
 	@Override
 	public void run() {
 		while(gameIsRunning){
-		    if(boy.outOfBounds()){
+		    if(boy.outOfBounds() && (currentLevel < lastLevel)){
                 world.initializeStage(++currentLevel);
                 boy.reinitialize();
             }
@@ -67,10 +67,10 @@ public class GameManager extends Thread {
 		//manage the two possible run direction
 		if(currentKeys.contains(KeyEvent.VK_RIGHT)){
 			//move right
-			boy.move(KeyEvent.VK_RIGHT);
+			boy.move(KeyEvent.VK_RIGHT, isLastLevel());
 		} else if (currentKeys.contains(KeyEvent.VK_LEFT)){
 			//move left
-			boy.move(KeyEvent.VK_LEFT);
+			boy.move(KeyEvent.VK_LEFT, isLastLevel());
 		} else if(currentKeys.isEmpty() && !boy.getJumping() && !boy.getFalling()){
 			//if the player is not pressing keys, the protagonist stands still
 			boy.stop();
@@ -87,6 +87,14 @@ public class GameManager extends Thread {
 	public Boy getBoy(){
 		return boy;
 	}
+	
+	private boolean isLastLevel() {
+		if(currentLevel >= lastLevel)
+			return true;
+		return false;
+	}
+	
+	private int lastLevel = 2;
 	
    //number of the current level the character finds himself in
     private int currentLevel=1;

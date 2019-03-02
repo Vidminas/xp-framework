@@ -50,7 +50,7 @@ public class Boy {
 	}
 	
 	//function called by the GameManager's manageKeys() function
-	public void move(int direction) {
+	public void move(int direction, boolean isLastLevel) {
 	    this.idle=false;
 	    
 		switch (direction) {
@@ -84,6 +84,10 @@ public class Boy {
 			case KeyEvent.VK_RIGHT:
 				//update the character's position
 				currentX=currentX+DISPLACEMENT;
+				
+				if(currentX >= (GameFrame.WIDTH - BOY_WIDTH) && isLastLevel) {
+					currentX=GameFrame.WIDTH - BOY_WIDTH;
+				}
 				
 				//update the character's bounding box position
 				boundingBox.setLocation(currentX, currentY);
@@ -273,6 +277,10 @@ public class Boy {
         restoring=true;
         restoring_count=RESTORING_THRESH;
         life--;
+        
+        //Game closes when you die
+        if(life < 1)
+        	System.exit(0);;
     }
 
     public void reinitialize() {
