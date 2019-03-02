@@ -45,8 +45,6 @@ public class GameManager extends Thread {
             boy.checkBlockCollisions();
 
             boy.checkRestoringCount();
-			//manage the keys currently pressed
-			manageKeys();
 			
 			gamePanel.repaintGame();
 			
