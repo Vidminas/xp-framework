@@ -134,8 +134,15 @@ public class Boy {
             int upLeftCornerCol=(int)(boundingBox.getMinX()/Tile.TILE_SIZE);
 
             //tile position relative to the upper-right corner of the character's bounding box
+            
             int upRightCornerCol=(int)((boundingBox.getMaxX())/Tile.TILE_SIZE);
-
+            
+            //in case the upper right corner is out of bounds since the character is at the very 
+            //right of the game world
+            if (World.COLS == upRightCornerCol) {
+            	upRightCornerCol = World.COLS - 1;
+            }
+            
             if(currentRow>=0){
                 if(World.tiledMap[upRow][upLeftCornerCol] instanceof Block){
                     //if the upper-left corner stats intersecting a block, stop the jumping phase
