@@ -8,68 +8,63 @@ import javax.swing.JPanel;
 
 import logic.Boy;
 import logic.Tile;
+import logic.Tileset;
 import logic.World;
 
-//PlayPanel - Is the panel where you see the actual game in motion,
-//all the big part under the stats panel 
-public class PlayPanel extends JPanel{
-
+// PlayPanel - the playable area of the game
+public class PlayPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
+	
+	// Height of the terrain in pixels = the distance of the boy's feet
+    // From the bottom border of the game window
+    public static final int TERRAIN_HEIGHT = 192;
+    public static final int PLAY_PANEL_HEIGHT = 640;
+    private Boy boy;
 
-	public PlayPanel(){
-		
-		//set the size of the play panel
+	public PlayPanel() {
 		this.setSize(GameFrame.WIDTH, PLAY_PANEL_HEIGHT);
-		
-		//set a random background color to distinguish the play panel from the rest
+		// Set a random background colour to distinguish the play panel from the rest
+		// This will be invisible when the map background image is drawn over it
 		this.setBackground(Color.DARK_GRAY);
 		
-		//set no layouts
+		// Set no layouts
 		this.setLayout(null);
 		
-		//double buffering should supposedly improve animations
-		//read more about how double buffer works at http://www.anandtech.com/show/2794/2
+		// Double buffering should improve animations
+		// Read more about how double buffering works at http://www.anandtech.com/show/2794/2
 		this.setDoubleBuffered(true);
 	}
+	
+	//function called by the GameManager to add the boy (protagonist) to the play panel at runtime
+    //the PlayPanel needs a reference to the boy since he's drawn a LOT of times 
+    public void addBoy(Boy boy) {
+        this.boy = boy;
+    }
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Graphics2D g2=(Graphics2D)g;
+		Graphics2D g2 = (Graphics2D) g;
 		
-		//use antialiasing to draw smoother images and lines
+		// Use anti-aliasing to draw smoother images and lines
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		g2.drawImage(World.CURRENT_BACKGROUND,0,-Tile.TILE_SIZE,GameFrame.WIDTH,PLAY_PANEL_HEIGHT, null);
 
-        for(int i=0; i<World.ROWS; i++){
-            for(int j=0; j<World.COLS; j++){
-                if(World.tiledMap[i][j]!=null){
-                    g2.drawImage(World.tiledMap[i][j].getImage(), j*Tile.TILE_SIZE, i*Tile.TILE_SIZE, null);
+		// Draw the game background
+		g2.drawImage(World.backgroundImage, 0, -Tileset.TILE_SIZE, GameFrame.WIDTH,PLAY_PANEL_HEIGHT, null);
+
+		// Draw the game map
+        for (int i = 0; i < World.rows; ++i) {
+            for (int j = 0; j < World.cols; ++j) {
+                if (!World.map[i][j].empty()) {
+                    g2.drawImage(World.map[i][j].getImage(), j * Tileset.TILE_SIZE, i * Tileset.TILE_SIZE, null);
                 }
             }
 		}
 		
-		//draw the protagonist of the game
-        if(!boy.getRestoring()){
-            g2.drawImage(boy.getCurrentFrame(),boy.getCurrentX(),boy.getCurrentY(),null);
+		// Draw the protagonist of the game
+        if(!boy.getRestoring()) {
+            g2.drawImage(boy.getCurrentFrame(), boy.getCurrentX(), boy.getCurrentY(), null);
             g2.draw(boy.getBoundingBox());
         }
 	}
-	
-	//function called by the GameManager to add the boy (protagonist) to the play panel at runtime
-	//the PlayPanel needs a reference to the boy since he's drawn a LOT of times 
-	public void addBoy(Boy boy) {
-		this.boy=boy;
-	}
-	
-	//height of the terrain in pixels - this is basically the distance of the boy's feet 
-	//from the bottom border of the window you play the game in
-	public static final int TERRAIN_HEIGHT=192;
-	
-	//height of the PlayPanel 
-	public static final int PLAY_PANEL_HEIGHT=640;
-	
-	//reference to the protagonist of the game
-	private Boy boy;
 }

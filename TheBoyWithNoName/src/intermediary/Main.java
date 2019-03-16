@@ -5,14 +5,11 @@ import gui.GamePanel;
 
 public class Main {
 	public static void main(String[] args) {
-		//Initialise the gamePanel
-		GamePanel gamePanel=new GamePanel();
+		// Initialise all the game components and start playing
+		GamePanel gamePanel = new GamePanel();
+		GameFrame gameFrame = new GameFrame(gamePanel);
+        GameManager gameManager = new GameManager(gamePanel);
 		
-		//Initialise and start the main thread of the game
-		GameManager gameManager=new GameManager(gamePanel);
 		gameManager.start();
-		
-		//start-up the game main frame 
-		GameFrame gameFrame=new GameFrame(gamePanel);
 	}
 }

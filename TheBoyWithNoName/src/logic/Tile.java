@@ -1,30 +1,40 @@
 package logic;
 
-import java.awt.Rectangle;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-public abstract class Tile {
-    public Tile(int i, int j){
-        this.row=i;
-        this.col=j;
-        initializeStuff();
+import javax.imageio.ImageIO;
+
+// A tile is an element of the tileset
+// Only one object per each kind of tile is created
+// It contains the properties that all tiles of a particular kind share
+// Such as the name, category type, description and image
+public class Tile {
+    private String name;
+    private String type;
+    private String info;
+    private Image image;
+    
+    public Tile(String imageFile, String name, String type, String info) {
+        this.name = name;
+        this.type = type;
+        this.info = info;
+        
+        try {
+            this.image = ImageIO.read(getClass().getResource("/images/" + imageFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        this.image = image.getScaledInstance(Tileset.TILE_SIZE, Tileset.TILE_SIZE, BufferedImage.SCALE_SMOOTH);
     }
-     
-    protected abstract void initializeStuff();
-     
-    protected abstract void loadInformations();
-     
-    public BufferedImage getImage(){
+    
+    public String getName() {
+        return name;
+    }
+
+    public Image getImage() {
         return image;
     }
-     
-    public Rectangle getBoundingBox() {
-        return boundingBox;
-    }
-     
-    protected int row;
-    protected int col;
-    protected BufferedImage image;
-    protected Rectangle boundingBox;
-    public static final int TILE_SIZE=64;
 }
