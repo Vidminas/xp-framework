@@ -1,7 +1,7 @@
 package logic;
 
 import gui.GameFrame;
-import gui.PlayPanel;
+import intermediary.Settings;
 
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -19,14 +19,7 @@ public class Boy {
     
     // Current frame in the animation
     private BufferedImage currentFrame;
-    
-    // Size of the run animation buffer - a slot for each frame
-    private final int BUFFER_RUN_SIZE = 6;
-    
-    // Dimensions of the boy sprite
-    private final int BOY_SPRITE_WIDTH = 40;
-    private final int BOY_SPRITE_HEIGHT = 64;
-    
+
     // All the bufferedImages used in the character's animation 
     private BufferedImage idle_R;
     private BufferedImage idle_L;
@@ -45,13 +38,11 @@ public class Boy {
     /* **************************** */
     
     // The initial position of the character
-    public static final int BOY_START_X = 2 * Tileset.TILE_SIZE;
-    public static final int BOY_START_Y = 6 * Tileset.TILE_SIZE;
+    public static final int BOY_START_X = 2 * Settings.TILE_SIZE;
+    public static final int BOY_START_Y = 6 * Settings.TILE_SIZE;
     // The current position of the character
     private int currentX;
     private int currentY;
-    private int currentCol;
-    private int currentRow;
     
     // The boundingBox (sometimes called hit box) is a rectangle around the character
     // It defines the space occupied by the character at the specific moment
@@ -77,7 +68,7 @@ public class Boy {
     // Incremented for the character is in the descending phase of the jump. It goes on
     // Incrementing until jump_count reaches JUMP_COUNTER_THRESH*2, then the jumping 
     // Boolean is set to false and the count is reinitialised
-    private int jump_count = 0;
+    private int jump_count;
 
     // jumping is 'true' when the character is actually jumping
     // Is 'false' when the character is not up in the air
@@ -95,11 +86,10 @@ public class Boy {
     private int moveCounter = 0;
     
     // True when the character is falling
-    // Initially the protagonist is not falling
-    private boolean falling = false;
+    private boolean falling;
     
     // Idle is 'true' if the character is not moving, false otherwise
-    private boolean idle = true;
+    private boolean idle;
     
     /* **************** */
     /* Other properties */
@@ -112,7 +102,7 @@ public class Boy {
     private final static int RESTORING_THRESH = 84;
     private final static int RESTORING_MODULE = 12;
 
-    public static final int MAX_LIFE = 3;
+    public final int MAX_LIFE = 3;
     // Life initially equals 3, every time the character dies it decreases
     private int life = MAX_LIFE;
     
@@ -122,31 +112,47 @@ public class Boy {
     public void resetPosition() {
         currentX = BOY_START_X;
         currentY = BOY_START_Y;
-        currentCol = currentX / Tileset.TILE_SIZE;
-        currentRow = currentY / Tileset.TILE_SIZE;
         
         boundingBox = new Rectangle(BOY_START_X, currentY, BOY_WIDTH, BOY_HEIGHT);
+        
         // Initially, the character is standing still with his head turned right
         facingDirection = KeyEvent.VK_RIGHT;
         currentFrame = idle_R;
         falling = false;
+        jump_count = 0;
+        
+        idle = true;
     }
     
 	public Boy() {
 	    // Initialise the buffers that will store the run sprites
-        run_L = new BufferedImage[BUFFER_RUN_SIZE];
-        run_R = new BufferedImage[BUFFER_RUN_SIZE];
+        run_L = new BufferedImage[Settings.BOY_RUN_FRAMES];
+        run_R = new BufferedImage[Settings.BOY_RUN_FRAMES];
         
 	    // Load all the sprites needed to animate the character
         try {
-            BufferedImage spritesheet = ImageIO.read(getClass().getResource("/images/player.png"));
+            BufferedImage spritesheet = ImageIO.read(getClass().getResource(Settings.playerSpritesheet));
           
-            idle_R = spritesheet.getSubimage(0, 0, BOY_SPRITE_WIDTH, BOY_SPRITE_HEIGHT);
-            idle_L = spritesheet.getSubimage(0, 64, BOY_SPRITE_WIDTH, BOY_SPRITE_HEIGHT);
+            idle_R = spritesheet.getSubimage(0,
+                                             0,
+                                             Settings.BOY_SPRITE_WIDTH,
+                                             Settings.BOY_SPRITE_HEIGHT);
             
-            for (int i = 0; i < BUFFER_RUN_SIZE; i++) {
-                run_R[i] = spritesheet.getSubimage((i+1) * BOY_SPRITE_WIDTH, 0, BOY_SPRITE_WIDTH, BOY_SPRITE_HEIGHT);
-                run_L[i] = spritesheet.getSubimage((i+1) * BOY_SPRITE_WIDTH, 64, BOY_SPRITE_WIDTH, BOY_SPRITE_HEIGHT);
+            idle_L = spritesheet.getSubimage(0,
+                                             Settings.BOY_SPRITE_HEIGHT,
+                                             Settings.BOY_SPRITE_WIDTH,
+                                             Settings.BOY_SPRITE_HEIGHT);
+            
+            for (int i = 0; i < Settings.BOY_RUN_FRAMES; i++) {
+                run_R[i] = spritesheet.getSubimage((i+1) * Settings.BOY_SPRITE_WIDTH,
+                                                   0,
+                                                   Settings.BOY_SPRITE_WIDTH,
+                                                   Settings.BOY_SPRITE_HEIGHT);
+                
+                run_L[i] = spritesheet.getSubimage((i+1) * Settings.BOY_SPRITE_WIDTH,
+                                                   Settings.BOY_SPRITE_HEIGHT,
+                                                   Settings.BOY_SPRITE_WIDTH,
+                                                   Settings.BOY_SPRITE_HEIGHT);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -163,19 +169,20 @@ public class Boy {
     // In this case MOVE_COUNTER_THRESH is set to 5
     private void setFrameNumber() {
         currentFrameNumber = moveCounter / MOVE_COUNTER_THRESH;
-        currentFrameNumber %= BUFFER_RUN_SIZE;
-        moveCounter %= MOVE_COUNTER_THRESH * BUFFER_RUN_SIZE;
+        currentFrameNumber %= Settings.BOY_RUN_FRAMES;
+        moveCounter %= MOVE_COUNTER_THRESH * Settings.BOY_RUN_FRAMES;
     }
 	
 	/* ****************** */
 	/* Movement functions */
 	/* ****************** */
-	public void moveLeft() {
+	public void moveLeft(boolean isLastLevel) {
 	    idle = false;
 	    facingDirection = KeyEvent.VK_LEFT;
 	    
 	    // Attempt to move left by DISPLACEMENT amount
-        currentX = checkMove(currentX, currentX-DISPLACEMENT);
+        currentX = checkMove(currentX, currentX - DISPLACEMENT, isLastLevel);
+        boundingBox.setLocation(currentX, currentY);
         
         // Change the current frame in animation
         if (!jumping && !falling){
@@ -186,8 +193,6 @@ public class Boy {
             currentFrame = run_L[0];
         }
  
-        currentRow = currentY / Tileset.TILE_SIZE;
-        currentCol = currentX / Tileset.TILE_SIZE;
         moveCounter++;
 	}
 	
@@ -196,7 +201,8 @@ public class Boy {
 	    facingDirection = KeyEvent.VK_RIGHT;
 	    
 	      // Attempt to move right by DISPLACEMENT amount
-        currentX = checkMove(currentX, currentX+DISPLACEMENT, isLastLevel);
+        currentX = checkMove(currentX, currentX + DISPLACEMENT, isLastLevel);
+        boundingBox.setLocation(currentX, currentY);
         
         // Change the current frame in animation
         if (!jumping && !falling){
@@ -207,8 +213,6 @@ public class Boy {
             currentFrame = run_R[0];
         }
         
-        currentRow = currentY / Tileset.TILE_SIZE;
-        currentCol = currentX / Tileset.TILE_SIZE;
         moveCounter++;
 	}
 	
@@ -217,38 +221,41 @@ public class Boy {
 	// If so, return the new position
 	// Otherwise, return the old one
 	private int checkMove(int oldX, int newX, boolean isLastLevel) {
-        if (newX < 0) {
+        if (newX <= 0) {
             return 0;
         }
     
-        if (newX >= (GameFrame.WIDTH - BOY_WIDTH) && isLastLevel) {
-					  return (GameFrame.WIDTH - BOY_WIDTH);
-				}
+        if (newX >= (Settings.WINDOW_WIDTH - BOY_WIDTH) && isLastLevel) {
+            return (Settings.WINDOW_WIDTH - BOY_WIDTH);
+		}
         
-        int footY = (int) (boundingBox.getMaxY());
-        int footRow = ((footY-1)/Tileset.TILE_SIZE);
-        int footCol;
+        boundingBox.setLocation(newX, currentY);
         
         // Get the tile position (in the tiled map) 
         // Relative to the tile in front of the character
+        int footCol;
+        
         if (facingDirection == KeyEvent.VK_RIGHT) {
             int footX = (int) boundingBox.getMinX();
-            footCol = (footX / Tileset.TILE_SIZE) + 1;
+            footCol = (footX / Settings.TILE_SIZE) + 1;
         } else {
             int footX = (int) boundingBox.getMaxX();
-            footCol = (footX / Tileset.TILE_SIZE) - 1;
+            footCol = (footX / Settings.TILE_SIZE) - 1;
         }
         
+        // The character is at the edge of the map and the tile in front of it
+        // Would be out of bounds, so skip checking it
         if (footCol < 0 || footCol >= World.cols) {
-            return oldX;
+            return newX;
         }
         
-        boundingBox.setLocation(newX, currentY);
+        int footY = (int) (boundingBox.getMaxY());
+        int footRow = ((footY-1) / Settings.TILE_SIZE);
+        
         Block tileInFrontOfFoot = World.map[footRow][footCol];
         
         if (!tileInFrontOfFoot.empty()
             && tileInFrontOfFoot.intersects(boundingBox)) {
-            boundingBox.setLocation(oldX, currentY);
             return oldX;
         }
         
@@ -302,17 +309,17 @@ public class Boy {
         // If it touches a block, stop the ascending phase of the jump (start falling)
         
         // Row position of the cell above the character's head (in the tiled map)
-        int upRow = (int) ((boundingBox.getMinY() - 1) / Tileset.TILE_SIZE);
+        int upRow = (int) ((boundingBox.getMinY() - 1) / Settings.TILE_SIZE);
 
         // Tile position relative to the upper-left corner of the character's bounding box
-        int upLeftCornerCol = (int) (boundingBox.getMinX() / Tileset.TILE_SIZE);
+        int upLeftCornerCol = (int) (boundingBox.getMinX() / Settings.TILE_SIZE);
         Block leftCornerBlock = World.map[upRow][upLeftCornerCol];
         
         // Tile position relative to the upper-right corner of the character's bounding box
-        int upRightCornerCol = (int) ((boundingBox.getMaxX()) / Tileset.TILE_SIZE);
+        int upRightCornerCol = (int) ((boundingBox.getMaxX()) / Settings.TILE_SIZE);
         Block rightCornerBlock = World.map[upRow][upRightCornerCol];
 
-        if (currentRow > 0) {
+        if (upRow >= 0) {
             if ((!leftCornerBlock.empty() && leftCornerBlock.intersects(boundingBox))
                 || (!rightCornerBlock.empty() && rightCornerBlock.intersects(boundingBox))) {
                 // If an upper corner is intersecting a block, stop the jumping phase
@@ -339,31 +346,42 @@ public class Boy {
     }
 
     public void handleFalling() {
-        if (boundingBox.getMaxY() / Tileset.TILE_SIZE >= World.rows) {
-            die();
-        }
-
+        // Skip falling altogether if the character is jumping
         if (jumping) {
             return;
         }
-
-        if (falling) {
-            currentY += DISPLACEMENT;
-            currentRow = currentY / Tileset.TILE_SIZE;
-            boundingBox.setLocation(currentX, currentY);
+        
+        int currentRow = (int) (currentY / Settings.TILE_SIZE);
+        
+        // If the character falls to the bottom of the world map - instant death
+        if (currentRow + 1 >= World.rows) {
+            die();
+            return;
         }
 
+        // Since the character is wider than one tile but less wide than two
+        // Check the two tiles below the character
         int lowLeftX = (int) boundingBox.getMinX() + 1;
         int lowRightX = (int) boundingBox.getMaxX() - 1;
-        int underlyingTileXL = lowLeftX / Tileset.TILE_SIZE;
-        int underlyingTileXR = lowRightX / Tileset.TILE_SIZE;
+        int lowLeftCol = lowLeftX / Settings.TILE_SIZE;
+        int lowRightCol = lowRightX / Settings.TILE_SIZE;
 
-        if (currentRow + 1 >= World.rows || underlyingTileXR >= World.cols) {
+        // Do not handle falling if the character is at the edge of the map
+        // (The GameManager should transition to the next level instead)
+        if (lowRightCol >= World.cols || lowLeftCol >= World.cols) {
             return;
         }
         
-        falling = ((World.map[currentRow+1][underlyingTileXR]).empty())
-                || ((World.map[currentRow+1][underlyingTileXL]).empty());
+        // If both of the tiles below the character are thin air
+        // Make the character fall down DISPLACEMENT units
+        if ((World.map[currentRow + 1][lowLeftCol]).empty()
+         && (World.map[currentRow + 1][lowRightCol]).empty()) {
+            falling = true;
+            currentY += DISPLACEMENT;
+            boundingBox.setLocation(currentX, currentY);
+        } else {
+            falling = false;
+        }
     }
     
     /* *************** */
@@ -385,8 +403,9 @@ public class Boy {
         life--;
         
         //Game closes when you die
-        if(life < 1)
-        	System.exit(0);;
+        if (life < 1) {
+        	System.exit(0);
+        }
     }
 	
 	/* ******* */
@@ -425,6 +444,6 @@ public class Boy {
     }
 
     public boolean outOfBounds() {
-        return (currentX >= GameFrame.WIDTH);
+        return (currentX >= Settings.WINDOW_WIDTH);
     }
 }

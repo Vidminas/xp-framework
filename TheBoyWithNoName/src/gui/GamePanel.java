@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JPanel;
 
+import intermediary.Settings;
 import logic.Boy;
 import logic.KeyboardController;
 
@@ -19,7 +20,7 @@ public class GamePanel extends JPanel {
 	
 	public GamePanel() {
 		this.setRequestFocusEnabled(true);
-		this.setSize(WIDTH, HEIGHT);
+		this.setSize(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
 		this.setLayout(null);
 		this.setBackground(Color.BLACK);
 
@@ -27,7 +28,7 @@ public class GamePanel extends JPanel {
 		statsPanel.setLocation(0, 0);
 
 		this.add(playPanel);
-		playPanel.setLocation(0, StatsPanel.STATS_HEIGHT);
+		playPanel.setLocation(0, Settings.STATS_PANEL_HEIGHT);
 		
 		this.addKeyListener(keyboardController);
 	}
@@ -37,7 +38,7 @@ public class GamePanel extends JPanel {
 		statsPanel.addBoy(boy);
 	}
 	
-	public void repaintGame(){
+	public void repaintGame() {
 		playPanel.repaint();
 		statsPanel.repaint();
 	}

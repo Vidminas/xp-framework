@@ -6,10 +6,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+import intermediary.Settings;
+
 // The tileset contains a HashMap of all possible tiles in the game
 // It is used to draw the game tiles on the screen
 public class Tileset {
-    public static final int TILE_SIZE = 64;
     // The key of each element is an integer ID of the tile
     private HashMap<Integer, Tile> tiles;
     
@@ -30,7 +31,7 @@ public class Tileset {
     
     public void loadTilesFromDisk() {
         // Load the tileset file
-        InputStream is = getClass().getResourceAsStream("/levels/tileset.txt");
+        InputStream is = getClass().getResourceAsStream(Settings.tileset);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         
         String line = null;

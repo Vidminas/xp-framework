@@ -9,13 +9,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import intermediary.Settings;
 import logic.Boy;
 
 public class StatsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	public static final int STATS_HEIGHT = 40;
-    
+	private static final int LEFT_MARGIN = 5;
+	
     private static final int HEARTS_X_DISTANCE = 60;
     private static final int HEARTS_START_X = 84;
     private static final int HEARTS_START_Y = 4;
@@ -28,7 +29,7 @@ public class StatsPanel extends JPanel {
     private Boy boy;
 
 	public StatsPanel() {
-		this.setSize(GameFrame.WIDTH, STATS_HEIGHT);
+		this.setSize(Settings.WINDOW_WIDTH, Settings.STATS_PANEL_HEIGHT);
 		this.setBackground(Color.BLACK);
 		this.setLayout(null);
 
@@ -50,13 +51,15 @@ public class StatsPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.drawImage(background, 0, 0, GameFrame.WIDTH-5, STATS_HEIGHT, null);
+        g2.drawImage(background, 0, 0, Settings.WINDOW_WIDTH - LEFT_MARGIN, Settings.STATS_PANEL_HEIGHT, null);
 
-        for (int i = 0; i < Boy.MAX_LIFE; ++i){
-            if (boy.getLife() > i) {
-                g2.drawImage(livingHeart, HEARTS_START_X + HEARTS_X_DISTANCE * i, HEARTS_START_Y, HEARTS_SIZE, HEARTS_SIZE, null);
-            } else {
-                g2.drawImage(deadHeart, HEARTS_START_X + HEARTS_X_DISTANCE * i, HEARTS_START_Y, HEARTS_SIZE, HEARTS_SIZE, null);
+        if (boy != null) {
+            for (int i = 0; i < boy.MAX_LIFE; ++i){
+                if (boy.getLife() > i) {
+                    g2.drawImage(livingHeart, HEARTS_START_X + HEARTS_X_DISTANCE * i, HEARTS_START_Y, HEARTS_SIZE, HEARTS_SIZE, null);
+                } else {
+                    g2.drawImage(deadHeart, HEARTS_START_X + HEARTS_X_DISTANCE * i, HEARTS_START_Y, HEARTS_SIZE, HEARTS_SIZE, null);
+                }
             }
         }
     }

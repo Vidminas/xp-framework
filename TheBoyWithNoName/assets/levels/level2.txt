@@ -1,9 +1,6 @@
-empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt
-empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt
-empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt
-empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt
-empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt
-empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt
-empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt empt
-ter0 ter1 terR empt terL ter1 ter0 ter1 ter0 ter1 ter0 ter1 ter0 ter1 ter0 ter1 ter0 ter1 ter0 ter1
-term term terQ empt terP term term term term term term term term term term term term term term term
+20 10 tileset.txt
+colorization 1.0 1.0 1.0 0.0 1.0
+.
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 1 7 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 4 4 4 4 7 0 0 0 0 0 0 0 0 0 0 0 0 3 1 4 4 4 4 4 4 7 0 0 0 0 0 0 0 0 3 2 1 4 4 4 4 4 4 4 4 4 7 0 0 0 0 0 3 1 4 4 4 4 4 4 4 4 4 4 4 4 4 1 2 1 1 1 5 4 4 4 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 

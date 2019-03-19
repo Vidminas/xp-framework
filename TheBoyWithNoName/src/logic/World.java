@@ -9,6 +9,8 @@ import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 
+import intermediary.Settings;
+
 // The world contains everything about the playable part of the game
 // Including the tileset, background, and game map for the current level
 // It can also load new levels from game files
@@ -26,15 +28,13 @@ public class World {
     public void loadLevel(int level) throws Exception {
         // Load a new background image for the level
         try {
-            backgroundImage = ImageIO.read(getClass().getResource("/images/background"
-                                + String.valueOf(level) + ".png"));
+            backgroundImage = ImageIO.read(getClass().getResource(Settings.levelBackgroundImage(level)));
         } catch (IOException e) {
             e.printStackTrace();
         }
         
         // Open the level map data files
-        InputStream is = getClass().getResourceAsStream("/levels/level"
-                            + String.valueOf(level) + ".txt");
+        InputStream is = getClass().getResourceAsStream(Settings.levelMap(level));
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         
         String line = null;

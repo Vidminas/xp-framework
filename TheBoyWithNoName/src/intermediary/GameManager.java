@@ -21,11 +21,10 @@ public class GameManager extends Thread {
     private GamePanel gamePanel;
     
     private boolean gameIsRunning;
-    private int currentLevel = 1;
-    private int lastLevel = 2;
+    private int currentLevel = Settings.FIRST_LEVEL;
   
     private boolean isLastLevel() {
-		  return (currentLevel >= lastLevel);
+		  return (currentLevel >= Settings.LAST_LEVEL);
 	  }
   
 	public GameManager(GamePanel gamePanel) {

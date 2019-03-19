@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
+import intermediary.Settings;
 import logic.Boy;
 import logic.Tile;
 import logic.Tileset;
@@ -15,14 +16,10 @@ import logic.World;
 public class PlayPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	// Height of the terrain in pixels = the distance of the boy's feet
-    // From the bottom border of the game window
-    public static final int TERRAIN_HEIGHT = 192;
-    public static final int PLAY_PANEL_HEIGHT = 640;
     private Boy boy;
 
 	public PlayPanel() {
-		this.setSize(GameFrame.WIDTH, PLAY_PANEL_HEIGHT);
+		this.setSize(Settings.WINDOW_WIDTH, Settings.PLAY_PANEL_HEIGHT);
 		// Set a random background colour to distinguish the play panel from the rest
 		// This will be invisible when the map background image is drawn over it
 		this.setBackground(Color.DARK_GRAY);
@@ -50,19 +47,19 @@ public class PlayPanel extends JPanel {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// Draw the game background
-		g2.drawImage(World.backgroundImage, 0, -Tileset.TILE_SIZE, GameFrame.WIDTH,PLAY_PANEL_HEIGHT, null);
+		g2.drawImage(World.backgroundImage, 0, -Settings.TILE_SIZE, Settings.WINDOW_WIDTH, Settings.PLAY_PANEL_HEIGHT, null);
 
 		// Draw the game map
         for (int i = 0; i < World.rows; ++i) {
             for (int j = 0; j < World.cols; ++j) {
                 if (!World.map[i][j].empty()) {
-                    g2.drawImage(World.map[i][j].getImage(), j * Tileset.TILE_SIZE, i * Tileset.TILE_SIZE, null);
+                    g2.drawImage(World.map[i][j].getImage(), j * Settings.TILE_SIZE, i * Settings.TILE_SIZE, null);
                 }
             }
 		}
 		
 		// Draw the protagonist of the game
-        if(!boy.getRestoring()) {
+        if (boy != null && !boy.getRestoring()) {
             g2.drawImage(boy.getCurrentFrame(), boy.getCurrentX(), boy.getCurrentY(), null);
             g2.draw(boy.getBoundingBox());
         }
