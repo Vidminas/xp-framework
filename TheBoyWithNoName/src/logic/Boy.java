@@ -313,21 +313,27 @@ public class Boy {
 
         // Tile position relative to the upper-left corner of the character's bounding box
         int upLeftCornerCol = (int) (boundingBox.getMinX() / Settings.TILE_SIZE);
-        Block leftCornerBlock = World.map[upRow][upLeftCornerCol];
+        Block leftCornerBlock = null;
+        
+        if (upRow >= 0 && upLeftCornerCol >= 0) {
+            leftCornerBlock = World.map[upRow][upLeftCornerCol];
+        }
         
         // Tile position relative to the upper-right corner of the character's bounding box
         int upRightCornerCol = (int) ((boundingBox.getMaxX()) / Settings.TILE_SIZE);
-        Block rightCornerBlock = World.map[upRow][upRightCornerCol];
+        Block rightCornerBlock = null;
+        
+        if (upRow >= 0 && upRightCornerCol < World.cols) {
+            rightCornerBlock = World.map[upRow][upRightCornerCol];
+        }
 
-        if (upRow >= 0) {
-            if ((!leftCornerBlock.empty() && leftCornerBlock.intersects(boundingBox))
-                || (!rightCornerBlock.empty() && rightCornerBlock.intersects(boundingBox))) {
-                // If an upper corner is intersecting a block, stop the jumping phase
-                // And start the falling phase, setting the jump_count to 0
-                jumping = false;
-                jump_count = 0;
-                falling = true;
-            }
+        if ((leftCornerBlock != null && !leftCornerBlock.empty() && leftCornerBlock.intersects(boundingBox))
+            || (rightCornerBlock != null && !rightCornerBlock.empty() && rightCornerBlock.intersects(boundingBox))) {
+            // If an upper corner is intersecting a block, stop the jumping phase
+            // And start the falling phase, setting the jump_count to 0
+            jumping = false;
+            jump_count = 0;
+            falling = true;
         }
     }
     
