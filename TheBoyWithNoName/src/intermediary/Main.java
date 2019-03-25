@@ -8,7 +8,7 @@ public class Main {
 		// Initialise all the game components and start playing
 		GamePanel gamePanel = new GamePanel();
 		GameFrame gameFrame = new GameFrame(gamePanel);
-        GameManager gameManager = new GameManager(gamePanel);
+        GameManager gameManager = new GameManager(gamePanel, gameFrame);
 		
 		gameManager.start();
 	}

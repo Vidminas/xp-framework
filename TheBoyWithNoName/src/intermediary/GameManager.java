@@ -1,10 +1,12 @@
 package intermediary;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import logic.Boy;
 import logic.KeyboardController;
 import logic.World;
+import gui.GameFrame;
 import gui.GamePanel;
 
 // The GameManager is the main thread of the game
@@ -19,19 +21,22 @@ public class GameManager extends Thread {
     private Boy boy;
     private World world;
     private GamePanel gamePanel;
+    private GameFrame gameFrame;
     
     private boolean gameIsRunning;
+    private boolean paused;
     private int currentLevel = Settings.FIRST_LEVEL;
   
     private boolean isLastLevel() {
 		  return (currentLevel >= Settings.LAST_LEVEL);
 	  }
   
-	public GameManager(GamePanel gamePanel) {
+	public GameManager(GamePanel gamePanel, GameFrame gameFrame) {
 	    this.world = new World();
 	    this.boy = new Boy();
 	    this.gamePanel = gamePanel;
         this.gamePanel.addBoy(boy);
+        this.gameFrame = gameFrame;
 	    
         try {
             this.world.loadLevel(currentLevel);
@@ -42,25 +47,29 @@ public class GameManager extends Thread {
 		// While the game is playing, gameIsRunning is set to true
 		// Can be used to implement pausing in the game
 		this.gameIsRunning = true;
+		this.paused = false;
 	}
 	
 	@Override
 	public void run() {
 		while (gameIsRunning) {
-		    if (boy.outOfBounds()) {
-                try {
-                    currentLevel++;
-                    world.loadLevel(currentLevel);
-                } catch (Exception e) {
-                    e.printStackTrace();
+		    if (!paused) {
+    		    if (boy.outOfBounds()) {
+                    try {
+                        currentLevel++;
+                        world.loadLevel(currentLevel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    boy.resetPosition();
                 }
-                boy.resetPosition();
-            }
-
-            boy.handleFalling();
-            boy.handleJumping();
+    
+                boy.handleFalling();
+                boy.handleJumping();
+                boy.checkRestoringCount();
+		    }
+		    
             manageKeys();
-            boy.checkRestoringCount();
 			
 			gamePanel.repaintGame();
 			
@@ -70,39 +79,47 @@ public class GameManager extends Thread {
 				e.printStackTrace();
 			}
 		}
+		
+		gameFrame.dispatchEvent(new WindowEvent(gameFrame, WindowEvent.WINDOW_CLOSING));
 	}
 	
 	// The function manages the keys currently pressed associating concrete
 	// Actions to them
 	private void manageKeys() {
 		// Get the currently pressed keys from the KeyboardController
-		HashSet<Integer> currentKeys=KeyboardController.getActiveKeys();
+		HashSet<Integer> currentKeys = KeyboardController.getActiveKeys();
 		
 		// If ESC is pressed - close the game
 		if (currentKeys.contains(KeyEvent.VK_ESCAPE)) {
-		    System.exit(0);
+		    gameIsRunning = false;
 		}
 		
-		// If right arrow is pressed - move the boy right
-		if (currentKeys.contains(KeyEvent.VK_RIGHT)){
-			boy.moveRight(isLastLevel());
-		}
-		
-		// If left arrow is pressed - move the boy left
-		if (currentKeys.contains(KeyEvent.VK_LEFT)){
-			boy.moveLeft(isLastLevel());
-		}
-		
-		// If spacebar is pressed - make the boy jump
-        if (currentKeys.contains(KeyEvent.VK_SPACE)) {
-            boy.startJumping();
+		if (currentKeys.contains(KeyEvent.VK_P)) {
+            paused = !paused;
         }
 		
-		// If the player is not pressing any keys, make the boy stand still
-		else if (currentKeys.isEmpty()
-		    && !boy.getJumping()
-		    && !boy.getFalling()) {
-			boy.stop();
+		if (!paused) {
+    		// If right arrow is pressed - move the boy right
+    		if (currentKeys.contains(KeyEvent.VK_RIGHT)){
+    			boy.moveRight(isLastLevel());
+    		}
+    		
+    		// If left arrow is pressed - move the boy left
+    		if (currentKeys.contains(KeyEvent.VK_LEFT)){
+    			boy.moveLeft(isLastLevel());
+    		}
+    		
+    		// If spacebar is pressed - make the boy jump
+            if (currentKeys.contains(KeyEvent.VK_SPACE)) {
+                boy.startJumping();
+            }
+    		
+    		// If the player is not pressing any keys, make the boy stand still
+    		else if (currentKeys.isEmpty()
+    		    && !boy.getJumping()
+    		    && !boy.getFalling()) {
+    			boy.stop();
+    		}
 		}
 	}
 
