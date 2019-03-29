@@ -13,27 +13,27 @@ import intermediary.Settings;
 public class Tileset {
     // The key of each element is an integer ID of the tile
     private HashMap<Integer, Tile> tiles;
-    
+
     public Tileset() {
         tiles = new HashMap<>();
         tiles.put(0, null);
         loadTilesFromDisk();
     }
-    
+
     public void addTile(int id, String imageFile, String name, String type, String info) {
         Tile tile = new Tile(imageFile, name, type, info);
         tiles.put(id, tile);
     }
-    
+
     public Tile getTile(int id) {
         return tiles.get(id);
     }
-    
+
     public void loadTilesFromDisk() {
         // Load the tileset file
         InputStream is = getClass().getResourceAsStream(Settings.tileset);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        
+
         String line = null;
         String[] tileProperties;
         try {
@@ -42,7 +42,7 @@ public class Tileset {
                 // Ignore lines beginning with # - they are comments
                 if (line.charAt(0) == '#')
                     continue;
-                
+
                 // Each tile has 5 comma-separated properties (some empty)
                 // 1. The tile number (maps refer to this)
                 // 2. Tile image file name
@@ -56,7 +56,7 @@ public class Tileset {
                                          tileProperties[3],
                                          tileProperties[4]);
             }
-            
+
             reader.close();
             is.close();
         } catch (IOException e) {
